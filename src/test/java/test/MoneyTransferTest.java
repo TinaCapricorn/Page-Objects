@@ -5,11 +5,10 @@ import org.junit.jupiter.api.Test;
 import page.DashboardPage;
 import page.LoginPage;
 import page.TransferPage;
-
-import java.util.Objects;
 import java.util.Random;
 
 import static com.codeborne.selenide.Selenide.open;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MoneyTransferTest {
     @Test
@@ -21,10 +20,12 @@ class MoneyTransferTest {
         var verificationCode = DataHelper.getVerificationCodeFor(authInfo);
         verificationPage.validVerify(verificationCode);
         DashboardPage page = new DashboardPage();
-        int firstCardBalance = page.getCardBalance(DataHelper.getFirstCard().getCardNumber());
-        int secondCardBalance = page.getCardBalance(DataHelper.getSecondCard().getCardNumber());
-        System.out.println(firstCardBalance);
-        System.out.println(secondCardBalance);
+        var firstCard = DataHelper.getFirstCard();
+        var secondCard = DataHelper.getSecondCard();
+        int firstCardBalance = page.getCardBalance(firstCard.getCardNumber());
+        int secondCardBalance = page.getCardBalance(secondCard.getCardNumber());
+        assertEquals(firstCardBalance, firstCard.getBalance());
+        assertEquals(secondCardBalance, secondCard.getBalance());
     }
 
     @Test
@@ -47,9 +48,9 @@ class MoneyTransferTest {
         transferPage.setSum(transferSum).setFromCardNumber(secondCardNumber).clickTransfer();
         int firstCardBalanceAfter = page.getCardBalance(firstCardNumber);
         int secondCardBalanceAfter = page.getCardBalance(secondCardNumber);
-        Objects.equals(firstCardBalanceAfter, firstCardBalance + transferSum);
-        Objects.equals(secondCardBalanceAfter, secondCardBalance - transferSum);
-        Objects.equals(startSum, firstCardBalanceAfter + secondCardBalanceAfter);
+        assertEquals(firstCardBalanceAfter, firstCardBalance + transferSum);
+        assertEquals(secondCardBalanceAfter, secondCardBalance - transferSum);
+        assertEquals(startSum, firstCardBalanceAfter + secondCardBalanceAfter);
 
     }
 }
